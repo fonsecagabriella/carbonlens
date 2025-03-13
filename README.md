@@ -54,13 +54,11 @@ This section explains the climate data pipeline architecture, which follows a mo
 ### Technologies applied
 
 - Airflow: Orchestrates the entire workflow (scheduling, monitoring, and managing tasks).
-- dlt: Extracts and loads the Climate Trace data into Google Cloud Storage (GCS) as raw files.
 - GCS (Datalake): Stores the raw Climate Trace data.
-- Airflow + dlt: Moves data from GCS to BigQuery in a staging table.
 - Spark: Processes and transforms large-scale data inside BigQuery.
 - dbt: Performs further transformations and modeling for analytics (e.g., cleaning, aggregating).
 - BigQuery: Acts as your data warehouse to store both raw and transformed data.
-- Dashboard: Visualizes the processed Climate Trace data using a BI tool (e.g., Looker Studio).
+- Looker Studio: Visualizes the processed data to answer project questions.
 
 ### Flow diagram
 ```
