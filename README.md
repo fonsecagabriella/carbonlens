@@ -122,46 +122,122 @@ This section explains the climate data pipeline architecture, which follows a mo
 
 
 ### Project Components
-1. Data Lake Extraction Scripts
+
+**1. Data Lake Extraction Scripts**
 
 **Climate Trace Emissions Extractor**
 Extracts global emissions data by country:
-`climate_claude.py` - Fetches emissions data from Climate Trace API
+- `climate_trace_extractor.py` - Fetches emissions data from Climate Trace API
+  - Retrieves country-level greenhouse gas emissions data (CO2, CH4, N2O)
+  - Calculates 20-year and 100-year global warming potentials
+  - Handles API pagination and rate limiting
+  - Outputs standardized CSV files to the data lake
 
 **World Bank Data Extractor**
-Extracts population and social indicators by country:
-`world_bank_extractor.py` - Fetches population, GDP, and other indicators
+Extracts socioeconomic indicators by country:
+- `world_bank_extractor.py` - Fetches population, GDP, and other development indicators
+  - Retrieves multiple indicators using World Bank API
+  - Fetches data for key development metrics (GDP, population, poverty, education)
+  - Handles missing data and country code standardization
+  - Outputs standardized CSV files with consistent country codes
 
+**2. Airflow DAGs**
 
-2. dbt Models
+**Data Extraction DAG**
+- `climate-data-dag.py` - Orchestrates the initial data extraction process
+  - Runs extraction scripts for multiple years as configured
+  - Uploads extracted data to Google Cloud Storage
+  - Handles parallel extraction for different data sources
+  - Supports both incremental and full refresh modes
+
+**Data Processing DAGs**
+- `spark-processing-dag.py` - Processes large datasets using Spark
+  - Transforms raw CSV data into optimized Parquet format
+  - Performs initial data cleaning and standardization
+  - Creates external tables in BigQuery pointing to processed data
+
+- `historical-spark-processing-dag.py` - Processes historical data on-demand
+  - Handles data for specific years as requested
+  - Includes branch logic to process only available datasets
+  - Creates external tables for historical data analysis
+
+- `historical-python-processing-dag.py` - Alternative processing with Python
+  - Lighter-weight processing for smaller datasets
+  - Creates BigQuery warehouse tables for transformed data
+
+**DBT Transformation DAG**
+- `dbt-transform-dag.py` - Runs dbt models to transform warehouse data
+  - Manages dependencies with upstream processing tasks
+  - Executes dbt run, test, and documentation commands
+  - Supports parameterized runs for specific time periods
+
+**3. dbt Models**
+
 For clarity, the explanation for the dbt models used in this project [can be found here](./_intructions/dbt_explanation.md).
 
+The dbt project consists of the following model layers:
+- **Staging models**: Initial data preparation and type casting
+- **Dimension models**: Business entity models with classifications
+- **Fact models**: Aggregated metrics and measurements
+- **Dashboard models**: Analysis-ready views for visualization
+
+The lineage graph shows the relationships between these models:
+
 <img src="./_intructions/images/dbt-lineage-graph.png" width="80%">
+
+**4. Cloud Infrastructure**
+
+**Google Cloud Storage**
+- Data lake for raw and processed files
+- Organized with the following structure:
+  - `/world_bank/` - World Bank indicators data
+  - `/climate_trace/` - Climate Trace emissions data
+  - `/processed/` - Processed Parquet files
+  - `/combined/` - Joined datasets
+
+**Google BigQuery**
+- Data warehouse with the following datasets:
+  - `zoomcamp_climate_raw` - External tables pointing to processed files
+  - `zoomcamp_climate_warehouse` - Materialized tables for analysis
+
+**Compute Engine / Kubernetes**
+- Hosting environment for Airflow and Spark processing
+- Configured for scaling based on workload requirements
+
+**5. Dashboard**
+
+**Google Data Studio / Looker**
+- Interactive dashboard with the following visualizations:
+  - Emissions by country income category
+  - Regional emissions comparison
+  - Emissions vs. GDP correlation analysis
+  - Time series analysis of emissions trends
+  - (TO DO NEXT) Netherlands-specific emissions profile
 
 ### How to replicate this project
 If you'd like to replicate this project, you can find [all the instructions here](./_intructions/_instructions.md).
 
 ### Evaluation criteria (for Zoomcamp classmates)
 - Problem description
-4 points: Problem is well described and it's clear what the problem the project solves
+    4 points: Problem is well described and it's clear what the problem the project solves
 
 - Cloud
-2 points: The project is developed in the cloud
-4 points: The project is developed in the cloud and IaC tools are used
+    2 points: The project is developed in the cloud
+    4 points: The project is developed in the cloud and IaC tools are used
 
 - Data ingestion (choose either batch or stream)
-**Batch / Workflow orchestration**
-4 points: End-to-end pipeline: multiple steps in the DAG, uploading data to data lake
+    **Batch / Workflow orchestration**
+    4 points: End-to-end pipeline: multiple steps in the DAG, uploading data to data lake
 
 - Data warehouse
-2 points: Tables are created in DWH, but not optimized
-4 points: Tables are partitioned and clustered in a way that makes sense for the upstream queries (with explanation)
+    2 points: Tables are created in DWH, but not optimized
+    4 points: Tables are partitioned and clustered in a way that makes sense for the upstream queries (with explanation)
 
 - Transformations (dbt, spark, etc)
-4 points: Tranformations are defined with dbt, Spark or similar technologies
+    4 points: Tranformations are defined with dbt, Spark or similar technologies
 
 - Dashboard
-4 points: A dashboard with 2 tiles
+    4 points: A dashboard with 2 tiles
 
 - Reproducibility
-4 points: Instructions are clear, it's easy to run the code, and the code works
+    4 points: Instructions are clear, it's easy to run the code, and the code works
