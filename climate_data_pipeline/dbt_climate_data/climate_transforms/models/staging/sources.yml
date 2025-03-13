@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: raw_data
+    database: peppy-plateau-447914-j6  # Verify this matches your GCP project ID
+    schema: zoomcamp_climate_warehouse  # Verify this matches your dataset name
+    tables:
+      - name: combined_climate_economic
+        description: "Combined climate and economic data from World Bank and Climate Trace"

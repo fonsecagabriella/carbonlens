@@ -1,0 +1,28 @@
+version: 2
+
+seeds:
+  - name: countries
+    description: "ISO country codes with region information"
+    columns:
+      - name: name
+        description: "Country name"
+      - name: alpha-2
+        description: "ISO 3166-1 alpha-2 country code"
+      - name: alpha-3
+        description: "ISO 3166-1 alpha-3 country code"
+      - name: country-code
+        description: "ISO numeric country code"
+      - name: iso_3166-2
+        description: "ISO 3166-2 subdivision code"
+      - name: region
+        description: "Geographic region"
+      - name: sub-region
+        description: "Geographic sub-region"
+      - name: intermediate-region
+        description: "Geographic intermediate region"
+      - name: region-code
+        description: "Numeric code for region"
+      - name: sub-region-code
+        description: "Numeric code for sub-region"
+      - name: intermediate-region-code
+        description: "Numeric code for intermediate region"
