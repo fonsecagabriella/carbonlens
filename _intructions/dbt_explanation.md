@@ -9,6 +9,9 @@ The models are designed with clear dependencies that create a logical data trans
 4. Fact models aggregate dimensional data
 5. Dashboard models combine and transform data from multiple dimensions/facts
 
+
+<img src="./images/dbt-lineage-graph.png" width="80%">
+
 This organization provides several benefits:
 
 - Clear separation of concerns
@@ -20,12 +23,7 @@ This organization provides several benefits:
 
 # 👩🏽‍💻 Index
 
-## 1. Introduction
-- [dbt Model Organization](#dbt-model-organization)
-  - Overview of the layered architecture
-  - Benefits of the model structure
-
-## 2. Key Transformations
+## 1. Key Transformations
 - [Data Filtering](#key-transformations)
 - [Data Classification](#key-transformations)
 - [Metric Calculation](#key-transformations)
@@ -33,38 +31,38 @@ This organization provides several benefits:
 - [Regional Aggregation](#key-transformations)
 - [Economic-Environmental Correlation](#key-transformations)
 
-## 3. Source and Staging Models
+## 2. Source and Staging Models
 - [raw_data.combined_climate_economic (Source)](#source-and-staging-models)
 - [stg_combined_climate_economic](#source-and-staging-models)
 - [countries (Seed)](#source-and-staging-models)
 - [stg_sovereign_countries](#source-and-staging-models)
 - [stg_sovereign_climate_economic](#source-and-staging-models)
 
-## 4. Dimension Models
+## 3. Dimension Models
 - [dim_sovereign_climate_emissions](#dimension-models)
 - [dim_sovereign_socioeconomic](#dimension-models)
 - [dim_sovereign_development_wellbeing](#dimension-models)
 
-## 5. Fact Models
+## 4. Fact Models
 - [fct_regional_emissions_summary](#fact-models)
 
-## 6. Dashboard/Analytics Models
+## 5. Dashboard/Analytics Models
 - [emissions_by_development](#dashboardanalytics-models)
 - [gpd_emissions_correlation](#dashboardanalytics-models)
 - [netherlands_emissions](#dashboardanalytics-models)
 - [emissions_time_series](#dashboardanalytics-models)
 
-## 7. Debug/QA Models
+## 6. Debug/QA Models
 - [source_data_check](#debugqa-models)
 - [country_join_check](#debugqa-models)
 
-## 8. Models & Dashboards
+## 7. Models & Dashboards
 - [How do emissions vary by economic development level?](#models--dashboards)
 - [Which countries have the highest emissions?](#models--dashboards)
 - [Is there a correlation between GDP and emissions?](#models--dashboards)
 - [How has the emissions profile changed over time?](#models--dashboards)
 
-## 9. Conclusion
+## 8. Conclusion
 - [Summary of dbt model organization](#conclusion)
 
 
@@ -81,7 +79,8 @@ The pipeline implements several important transformations:
 - Regional Aggregation: Summarizing data by geographic regions
 - Economic-Environmental Correlation: Analyzing relationships between development and emissions
 
-<img src="./images/dbt-lineage-graph.png" width="80%">
+
+----
 
 ## Source and Staging Models
 
@@ -124,6 +123,8 @@ This model joins climate and economic data with the sovereign countries list. It
     - Preserves all climate and economic fields from the combined dataset
     - Creates a filtered dataset focused only on recognized sovereign nations
 
+----
+
 ## Dimension Models
 - [`dim_sovereign_climate_emissions`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/core/dim_sovereign_climate_emissions.sql)
 This model focuses on emissions data with derived metrics and categorizations. It includes:
@@ -150,6 +151,8 @@ This model focuses on human development indicators. It includes:
     - Development status groupings
     - Filtering to include only countries with valid data
 
+----
+
 ## Fact Models
 - [`fct_regional_emissions_summary`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/core/fct_regional_emissions_summary.sql)
 This model aggregates emissions data by geographic region, allowing you to compare total emissions, per capita emissions, and economic metrics across major world regions. It includes:
@@ -158,6 +161,8 @@ This model aggregates emissions data by geographic region, allowing you to compa
     - Population and GDP stats per region
     - Emissions per capita to compare regional efficiency
     - Distribution of income categories within each region
+
+----
 
 ## Dashboard/Analytics Models
 - [`emissions_by_development`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/dashboard/emissions_by_development.sql)
@@ -199,6 +204,8 @@ This model creates a comprehensive time-series analysis of emissions trends. It 
     - Long-term trend classifications (rapid decrease, moderate decrease, stable, etc.)
     - Emissions composition changes over time
 
+----
+
 ## Debug/QA Models
 - [`source_data_check`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/debug/source_data_check.sql)
 This utility model verifies raw data availability and completeness. It includes:
@@ -230,7 +237,7 @@ We create enough models to answer the project key questions:
     ✅ Line chart tracking emissions per capita across development levels
     ✅ Comparison of emissions share vs. population share by income group
 
-- ***Which countries have the highest emissions?**
+- ***Which countries have the highest emissions?***
 
     Used the `top_emitting_countries` model to create:
 
