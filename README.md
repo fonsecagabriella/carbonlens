@@ -108,7 +108,7 @@ This section explains the climate data pipeline architecture, which follows a mo
 ### Flow Explanation:
 - [Climate Trace emissions](https://climatetrace.org/) and [World Bank socioeconomic indicators](https://data.worldbank.org/indicator/): Source datasets.
 
-- Airflow (Extraction): Orchestrates the data extraction from both sources.
+- Airflow (Extraction): Orchestrates the data extraction from both sources. 
 
 - GCS (Datalake): Stores raw and intermediate datasets.
 
