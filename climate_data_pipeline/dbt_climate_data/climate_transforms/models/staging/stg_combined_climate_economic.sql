@@ -18,4 +18,9 @@ SELECT
     CAST(co2e_100yr AS NUMERIC) AS co2e_100yr_global_warming_potential,
     CAST(co2e_20yr AS NUMERIC) AS co2e_20yr_global_warming_potential
 FROM {{ source('raw_data', 'combined_climate_economic') }}
+-- the filters below will ensure we have data from both the World Bank and Climate Trace for a given country and year
 WHERE country IS NOT NULL
+  AND year IS NOT NULL
+  AND co2 IS NOT NULL 
+  AND ny_gdp_pcap_cd IS NOT NULL
+  AND sp_pop_totl IS NOT NULL

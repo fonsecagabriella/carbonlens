@@ -1,120 +1,262 @@
-DRAFT
+# dbt Model Organization
 
-Explanation of Our dbt Models
+The dbt models follow a layered architecture pattern typical of the modern data stack.
+The models are designed with clear dependencies that create a logical data transformation flow:
 
-Let me explain the purpose and approach of each model we've created:
+1. Raw data from sources feeds into staging models
+2. Staging models provide clean, typed data to dimensional models
+3. Dimensional models add business logic and classifications
+4. Fact models aggregate dimensional data
+5. Dashboard models combine and transform data from multiple dimensions/facts
 
-Core Models
+This organization provides several benefits:
 
-1. fct_regional_emissions_summary
+- Clear separation of concerns
+- Reusable transformation logic
+- Testable interfaces between layers
+- Traceable data lineage
 
+---
+
+# 👩🏽‍💻 Index
+
+## 1. Introduction
+- [dbt Model Organization](#dbt-model-organization)
+  - Overview of the layered architecture
+  - Benefits of the model structure
+
+## 2. Key Transformations
+- [Data Filtering](#key-transformations)
+- [Data Classification](#key-transformations)
+- [Metric Calculation](#key-transformations)
+- [Time-series Analysis](#key-transformations)
+- [Regional Aggregation](#key-transformations)
+- [Economic-Environmental Correlation](#key-transformations)
+
+## 3. Source and Staging Models
+- [raw_data.combined_climate_economic (Source)](#source-and-staging-models)
+- [stg_combined_climate_economic](#source-and-staging-models)
+- [countries (Seed)](#source-and-staging-models)
+- [stg_sovereign_countries](#source-and-staging-models)
+- [stg_sovereign_climate_economic](#source-and-staging-models)
+
+## 4. Dimension Models
+- [dim_sovereign_climate_emissions](#dimension-models)
+- [dim_sovereign_socioeconomic](#dimension-models)
+- [dim_sovereign_development_wellbeing](#dimension-models)
+
+## 5. Fact Models
+- [fct_regional_emissions_summary](#fact-models)
+
+## 6. Dashboard/Analytics Models
+- [emissions_by_development](#dashboardanalytics-models)
+- [gpd_emissions_correlation](#dashboardanalytics-models)
+- [netherlands_emissions](#dashboardanalytics-models)
+- [emissions_time_series](#dashboardanalytics-models)
+
+## 7. Debug/QA Models
+- [source_data_check](#debugqa-models)
+- [country_join_check](#debugqa-models)
+
+## 8. Models & Dashboards
+- [How do emissions vary by economic development level?](#models--dashboards)
+- [Which countries have the highest emissions?](#models--dashboards)
+- [Is there a correlation between GDP and emissions?](#models--dashboards)
+- [How has the emissions profile changed over time?](#models--dashboards)
+
+## 9. Conclusion
+- [Summary of dbt model organization](#conclusion)
+
+
+
+-------
+
+## Key Transformations
+The pipeline implements several important transformations:
+
+- Data Filtering: Removing non-sovereign territories for focused analysis
+- Data Classification: Categorizing countries by income, emissions intensity, etc.
+- Metric Calculation: Computing emissions per capita, carbon intensity, etc.
+- Time-series Analysis: Calculating year-over-year changes and long-term trends
+- Regional Aggregation: Summarizing data by geographic regions
+- Economic-Environmental Correlation: Analyzing relationships between development and emissions
+
+<img src="./images/dbt-lineage-graph.png" width="80%">
+
+## Source and Staging Models
+
+- **[SOURCE]** [`raw_data.combined_climate_economic`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/staging/sources.yml)
+  This is the raw source data loaded from the data lake into BigQuery. It contains:
+
+    - Combined climate emissions data from Climate Trace
+    - Socioeconomic indicators from the World Bank
+    - Data for various countries and years without filtering or transformations
+
+
+
+- [`stg_combined_climate_economic`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/staging/stg_combined_climate_economic.sql)
+This model performs initial data cleaning and type casting on the raw combined dataset. It includes:
+
+    - Conversion of text fields to appropriate numeric types
+    - Renaming of cryptic column names to meaningful business terms
+    - Filtering out null country records
+    - No business logic or filtering of countries, just data preparation
+
+
+- **[SEED]** [countries](./../climate_data_pipeline/dbt_climate_data/climate_transforms/seeds/countries.yml)
+    This seed file provides reference data about countries worldwide, including:
+
+    - Country names and ISO codes (alpha-2, alpha-3)
+    - Geographic region and sub-region classifications
+    - Metadata about country status and organizational membership
+
+- [`stg_sovereign_countries`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/staging/stg_sovereign_countries.sql)
+This model filters the country reference data to include only sovereign nations. It includes:
+
+    - Filtering based on valid country codes and ISO designations
+    - Removing territories, dependencies, and non-sovereign entities
+    - Restructuring country data for easier joining with emissions data
+
+- [`stg_sovereign_climate_economic`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/staging/stg_sovereign_climate_economic.sql)
+This model joins climate and economic data with the sovereign countries list. It includes:
+
+    - Inner join that removes non-sovereign territories from analysis
+    - Preserves all climate and economic fields from the combined dataset
+    - Creates a filtered dataset focused only on recognized sovereign nations
+
+## Dimension Models
+- [`dim_sovereign_climate_emissions`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/core/dim_sovereign_climate_emissions.sql)
+This model focuses on emissions data with derived metrics and categorizations. It includes:
+
+    - Breakdown of emissions by greenhouse gas type (CO2, CH4, N2O)
+    - Calculation of total emissions and percentage composition by gas
+    - Categorization of countries by emission intensity (low, medium, high emitters)
+    - Classification of greenhouse gas composition patterns (CO2-dominant, methane-dominant, etc.)
+    - Analysis of short vs. long-term climate impacts based on different global warming potentials
+
+- [`dim_sovereign_socioeconomic`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/core/dim_sovereign_socioeconomic.sql)
+This model organizes economic indicators with income and development classifications. It includes:
+    - Population and GDP per capita metrics
+    - Categorization of countries by World Bank income groups (high, upper-middle, lower-middle, low)
+    - Inequality metrics using Gini index with categorical classifications
+    - Poverty indicators with severity classifications
+    - Unemployment rates with categorical groupings
+
+- [`dim_sovereign_development_wellbeing`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/core/dim_sovereign_development_wellbeing.sql)
+This model focuses on human development indicators. It includes:
+
+    - Education metrics (school enrollment) with categorical classifications
+    - Health metrics (life expectancy) with categorical classifications
+    - Development status groupings
+    - Filtering to include only countries with valid data
+
+## Fact Models
+- [`fct_regional_emissions_summary`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/core/fct_regional_emissions_summary.sql)
 This model aggregates emissions data by geographic region, allowing you to compare total emissions, per capita emissions, and economic metrics across major world regions. It includes:
 
-Total emissions broken down by greenhouse gas type (CO2, CH4, N2O)
-Population and GDP stats per region
-Emissions per capita to compare regional efficiency
-Distribution of income categories within each region
-2. fct_subregional_emissions_summary
+    - Total emissions broken down by greenhouse gas type (CO2, CH4, N2O)
+    - Population and GDP stats per region
+    - Emissions per capita to compare regional efficiency
+    - Distribution of income categories within each region
 
-This model provides a more granular view by breaking down emissions data to the sub-regional level (e.g., Western Europe, Southeast Asia). It includes:
+## Dashboard/Analytics Models
+- [`emissions_by_development`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/dashboard/emissions_by_development.sql)
+This model analyzes emissions patterns by country income categories. It includes:
 
-GHG composition breakdown by percentage
-Carbon intensity of economies (emissions per unit of GDP)
-Per capita emissions metrics
-Dominant GHG composition pattern for each sub-region
-Marts Models
+    - Aggregated emissions metrics for each income group (high, upper-middle, lower-middle, low income)
+    - Per capita emissions averages by income category
+    - Carbon intensity (emissions per GDP) by income group
+    - Each income group's share of global emissions vs. share of global population
+    - Emissions-to-population ratio to identify disproportionate impacts
 
-3. europe_emissions
+- [`gpd_emissions_correlation`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/dashboard/gpd_emissions_correlation.sql)
+This model provides correlation analysis between economic development and emissions with detailed decoupling metrics. It includes:
 
-This model focuses specifically on European countries, providing:
+    - Country-level GDP and emissions data with calculated ratios
+    - Regional averages for comparison with regional peers
+    - Year-over-year growth percentages for both GDP and emissions
+    - 5-year trend analysis for longer-term patterns
+    - Decoupling status categories (absolute decoupling, relative decoupling, no decoupling)
+    - Comparison metrics showing how countries perform against regional averages
 
-Detailed emissions profile for each European country
-Year-over-year change in emissions (percentage)
-Socioeconomic context (income, inequality, education, life expectancy)
-Carbon intensity metrics (emissions per capita, emissions per GDP)
-4. netherlands_emissions
+- [`netherlands_emissions`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/dashboard/netherlands_emissions.sql)
+This model provides a country-specific detailed analysis for the Netherlands. It includes:
 
-This model provides a deep dive into a single country (Netherlands):
+    - Time series of emissions broken down by greenhouse gas type
+    - Economic indicators (GDP, population) alongside emissions
+    - Per capita and per GDP emissions metrics
+    - Year-over-year change percentages for key metrics
+    - Economic-emissions relationship classification (decoupling status)
+    - Climate characteristics specific to the Netherlands
 
-Year-over-year changes in emissions, population, and GDP
-Economic-emissions relationship (decoupling analysis)
-Emissions composition (percentage of CO2, CH4, N2O)
-Long-term trends in carbon intensity
-5. emissions_by_development
+- [`emissions_time_series`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/dashboard/emissions_time_series.sql)
+This model creates a comprehensive time-series analysis of emissions trends. It includes:
 
-This model helps answer "How do emissions vary by economic development level?" by:
+    - Country and regional emissions data across all available years
+    - Year-over-year change calculations for emissions and composition
+    - Baseline comparisons against earliest available year
+    - Compound annual growth rate (CAGR) calculations
+    - Long-term trend classifications (rapid decrease, moderate decrease, stable, etc.)
+    - Emissions composition changes over time
 
-Grouping countries by World Bank income categories
-Calculating emissions share vs. population share
-Computing average emissions per capita by income group
-Tracking the percentage of global emissions by development category
-6. top_emitting_countries
+## Debug/QA Models
+- [`source_data_check`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/debug/source_data_check.sql)
+This utility model verifies raw data availability and completeness. It includes:
 
-This model identifies and analyzes the highest emitting countries:
+    - Total row count in the source data
+    - Count of distinct countries
+    - Simple validation that expected data exists
 
-Ranks countries by total emissions, per capita emissions, and carbon intensity
-Calculates each country's share of global emissions
-Provides emissions-to-population ratio to identify disproportionate emitters
-Includes regional context for each country
-7. gdp_emissions_correlation
+- [`country_join_check`](./../climate_data_pipeline/dbt_climate_data/climate_transforms/models/debug/country_join_check.sql)
+This diagnostic model validates the join quality between country codes and sovereign countries. It includes:
 
-This model explores the relationship between economic growth and emissions:
-
-Calculates GDP growth vs. emissions growth
-Identifies decoupling status (absolute, relative, or no decoupling)
-Compares countries to regional averages
-Provides both short-term (1-year) and long-term (5-year) views
-8. emissions_time_series
-
-This model examines how emissions have changed over time:
-
-Year-over-year changes in total and per capita emissions
-Long-term comparison to baseline year
-Compound annual growth rate (CAGR) of emissions
-Classification of long-term emission trends
-How to Use These Models for Your Dashboard
-
-To answer your key questions:
-
-How do emissions vary by economic development level?
-
-Use the emissions_by_development model to create:
-
-✅ Bar chart showing total emissions by income category
-✅ Line chart tracking emissions per capita across development levels
-✅ Comparison of emissions share vs. population share by income group
-Which countries have the highest emissions?
-
-Use the top_emitting_countries model to create:
-
-✅ Top 10 emitters by total emissions (bar chart)
-✅ Top 10 emitters by per capita emissions (bar chart)
-✅ Map visualization of emissions intensity by country
-Is there a correlation between GDP and emissions?
-
-Use the gdp_emissions_correlation model to create:
-
-✅ Scatter plot of GDP per capita vs. emissions per capita
-Timeline showing countries achieving decoupling
-✅ Comparison of carbon intensity by region
-How has the emissions profile changed over time?
-
-Use the emissions_time_series model to create:
-
-✅ Line chart showing global emissions trends
-Stacked area chart of emissions by gas type over time
-✅Comparative timeline of emissions by region
+    - Counts of matched vs. unmatched countries
+    - Sample lists of problematic countries
+    - Metrics to evaluate data quality and completeness
 
 
-— to do next
-This project was performed over an averahe of 30 hours. This is far from enough to make a cohevise end result. 
-The focus was to deliver and explore.
 
-The following steps would/should be performed for “real cases”: 
+---
 
-() industry knowledge: what gases have more impact? How to analyse co2 over 20and co2 over 100?
-() how to reduce and optimise costs: use of incremental tables in dbt, add variables for processing while tests, optimise queries
-() orchestration:
-() all in cloud
-() local and cloud setup
-() better documentation
+## Models & Dashboards
+
+We create enough models to answer the project key questions:
+
+- ***How do emissions vary by economic development level?***
+
+    Used the `emissions_by_development` model to create:
+
+    ✅ Bar chart showing total emissions by income category
+    ✅ Line chart tracking emissions per capita across development levels
+    ✅ Comparison of emissions share vs. population share by income group
+
+- ***Which countries have the highest emissions?**
+
+    Used the `top_emitting_countries` model to create:
+
+    ✅ Top 10 emitters by total emissions (bar chart)
+    ✅ Top 10 emitters by per capita emissions (bar chart)
+    ✅ Map visualization of emissions intensity by country
+
+- ***Is there a correlation between GDP and emissions?***
+
+    Used the `gdp_emissions_correlation` model to create:
+
+    ✅ Scatter plot of GDP per capita vs. emissions per capita
+    ✅ Comparison of carbon intensity by region
+    ☑️ (to do) Timeline showing countries achieving decoupling
+
+
+- ***How has the emissions profile changed over time?***
+
+    Used the `emissions_time_series` model to create:
+
+    ✅ Line chart showing global emissions trends
+    ✅Comparative timeline of emissions by region
+    ☑️ (to do) Stacked area chart of emissions by gas type over time
+
+
+----
+
+## Conclusion
+This dbt model organization follows data engineering best practices with a layered architecture that separates raw data, cleaned staging data, business logic dimensions, aggregated facts, and analysis-ready dashboard models. The design prioritizes reusability, clarity, and maintainability while supporting complex climate and economic analysis.

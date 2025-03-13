@@ -42,12 +42,14 @@ With the dashboard we should be able to answer questions like:
 ### 📊 The Dashboard
 
 The dashboard can be found [on this link](https://lookerstudio.google.com/u/0/reporting/e02b247a-e5d1-47d0-a8c3-8b1a254029a2/page/BGa9E).
-If at the time of reading this the board is not longer available (GCS is not cheap, after all) 🤷🏽‍♀️, you can have an impression [by checking here](./dashboard/).
+If at the time of reading this the board is not longer available (GCS is not cheap, after all 🤷🏽‍♀️), you can have an impression [by checking here](./dashboard/).
 
 
 -------
 
 ##  Pipeline Flow Structure
+
+This section explains the climate data pipeline architecture, which follows a modern data engineering approach by combining batch data extraction, cloud storage, processing with Spark/Python, transformation with dbt, and visualization in a dashboard. The pipeline integrates climate emissions data from Climate Trace with socioeconomic indicators from the World Bank to analyze relationships between economic development and greenhouse gas emissions.
 
 ### Technologies applied
 
@@ -61,7 +63,7 @@ If at the time of reading this the board is not longer available (GCS is not che
 - Dashboard: Visualizes the processed Climate Trace data using a BI tool (e.g., Looker Studio).
 
 ### Flow diagram
-'''lua
+```
                  +-----------------------------+
                  |  Climate Trace + World Bank |
                  +-----------------------------+
@@ -101,7 +103,7 @@ If at the time of reading this the board is not longer available (GCS is not che
           +-------------------------------+
           |   Looker Studio (Dashboard)   |
           +-------------------------------+
-'''
+```
 
 ### Flow Explanation:
 - [Climate Trace emissions](https://climatetrace.org/) and [World Bank socioeconomic indicators](https://data.worldbank.org/indicator/): Source datasets.

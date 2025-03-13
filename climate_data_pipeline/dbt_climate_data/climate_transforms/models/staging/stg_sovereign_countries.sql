@@ -8,7 +8,7 @@ WITH country_list AS (
     SELECT
         name AS country_name,
         `alpha-2` AS alpha_2,  -- Use backticks for column names with hyphens
-        `alpha-3` AS alpha_3,  -- Use backticks for column names with hyphens 
+        `alpha-3` AS alpha_3,  -- Use backticks for column names with hyphens
         `country-code` AS country_code,
         region,
         `sub-region` AS sub_region

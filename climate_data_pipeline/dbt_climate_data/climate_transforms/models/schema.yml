@@ -1,8 +1,9 @@
 version: 2
 
 models:
+  # Staging Models
   - name: stg_combined_climate_economic
-    description: "Staged combined climate and economic data"
+    description: "Staged combined climate and economic data with properly cast data types"
     columns:
       - name: country
         description: "Country ISO3 code"
@@ -16,32 +17,412 @@ models:
         description: "Total population (World Bank)"
       - name: gdp_per_capita
         description: "GDP per capita in current US$ (World Bank)"
-      - name: co2_emissions_per_capita
-        description: "CO2 emissions per capita in metric tons (World Bank)"
-      - name: total_emissions
-        description: "Total greenhouse gas emissions in CO2e (Climate Trace)"
+      - name: life_expectancy
+        description: "Life expectancy at birth in years (World Bank)"
+      - name: school_enrollment
+        description: "Secondary school enrollment rate, % gross (World Bank)"
+      - name: unemployment_rate
+        description: "Unemployment rate, % of total labor force (World Bank)"
+      - name: gini_index
+        description: "GINI index measuring income inequality (World Bank)"
+      - name: poverty_gap_2_15_usd
+        description: "Poverty gap at $2.15 a day, % (World Bank)"
+      - name: co2_emissions
+        description: "CO2 emissions in metric tons (Climate Trace)"
+      - name: ch4_emissions
+        description: "CH4 (methane) emissions in metric tons (Climate Trace)"
+      - name: n2o_emissions
+        description: "N2O (nitrous oxide) emissions in metric tons (Climate Trace)"
+      - name: co2e_100yr_global_warming_potential
+        description: "CO2 equivalent emissions using 100-year global warming potential (Climate Trace)"
+      - name: co2e_20yr_global_warming_potential
+        description: "CO2 equivalent emissions using 20-year global warming potential (Climate Trace)"
 
-  - name: climate_economic_analysis
-    description: "Analysis of climate and economic indicators with derived metrics"
+  - name: stg_sovereign_countries
+    description: "Filtered list of sovereign countries with region information"
+    columns:
+      - name: country_name
+        description: "Full country name"
+        tests:
+          - not_null
+      - name: alpha_2
+        description: "ISO 3166-1 alpha-2 country code (2-letter)"
+      - name: alpha_3
+        description: "ISO 3166-1 alpha-3 country code (3-letter)"
+        tests:
+          - not_null
+          - unique
+      - name: country_code
+        description: "ISO numeric country code"
+      - name: region
+        description: "Geographic region (e.g., Asia, Europe, Africa)"
+      - name: sub_region
+        description: "Geographic sub-region (e.g., Western Europe, Southeast Asia)"
+
+  - name: stg_sovereign_climate_economic
+    description: "Combined climate and economic data filtered to include only sovereign countries"
     columns:
       - name: country
+        description: "Country ISO3 code"
         tests:
           - not_null
-      - name: total_emissions_per_capita
-        description: "Total emissions divided by population"
-      - name: gdp_per_emission_unit
-        description: "GDP per capita divided by CO2 emissions per capita"
-      - name: income_category
-        description: "Classification based on GDP per capita"
-      - name: emissions_category
-        description: "Classification based on total emissions"
+      - name: year
+        description: "Year of the data"
+        tests:
+          - not_null
+      - name: population
+        description: "Total population"
+      - name: gdp_per_capita
+        description: "GDP per capita in current US$"
+      - name: co2_emissions
+        description: "CO2 emissions in metric tons"
+      - name: ch4_emissions
+        description: "CH4 (methane) emissions in metric tons"
+      - name: n2o_emissions
+        description: "N2O (nitrous oxide) emissions in metric tons"
 
-  - name: regional_emissions_summary
-    description: "Regional analysis of emissions and economic indicators"
+  # Dimension Models
+  - name: dim_sovereign_climate_emissions
+    description: "Climate emissions data with derived metrics and categorizations"
+    columns:
+      - name: country
+        description: "Country ISO3 code"
+        tests:
+          - not_null
+      - name: year
+        description: "Year of the data"
+        tests:
+          - not_null
+      - name: co2_emissions
+        description: "CO2 emissions in metric tons"
+      - name: ch4_emissions
+        description: "CH4 (methane) emissions in metric tons"
+      - name: n2o_emissions
+        description: "N2O (nitrous oxide) emissions in metric tons"
+      - name: co2e_100yr_global_warming_potential
+        description: "CO2 equivalent using 100-year GWP"
+      - name: co2e_20yr_global_warming_potential
+        description: "CO2 equivalent using 20-year GWP"
+      - name: calculated_total_emissions
+        description: "Sum of CO2, CH4, and N2O emissions"
+      - name: co2_percentage
+        description: "CO2 as percentage of total emissions"
+      - name: ch4_percentage
+        description: "CH4 as percentage of total emissions"
+      - name: n2o_percentage
+        description: "N2O as percentage of total emissions"
+      - name: emission_intensity_category
+        description: "Classification as low, medium, or high emitter"
+      - name: ghg_composition
+        description: "Classification based on dominant greenhouse gas"
+      - name: climate_impact_category
+        description: "Classification of short vs long-term climate impact"
+
+  - name: dim_sovereign_socioeconomic
+    description: "Economic indicators with income and development classifications"
+    columns:
+      - name: country
+        description: "Country ISO3 code"
+        tests:
+          - not_null
+      - name: year
+        description: "Year of the data"
+        tests:
+          - not_null
+      - name: population
+        description: "Total population"
+      - name: gdp_per_capita
+        description: "GDP per capita in current US$"
+      - name: gini_index
+        description: "GINI index measuring income inequality"
+      - name: poverty_gap_2_15_usd
+        description: "Poverty gap at $2.15 a day, %"
+      - name: unemployment_rate
+        description: "Unemployment rate, % of total labor force"
+      - name: school_enrollment
+        description: "Secondary school enrollment rate, % gross"
+      - name: life_expectancy
+        description: "Life expectancy at birth in years"
+      - name: income_category
+        description: "World Bank income classification"
+      - name: inequality_category
+        description: "Classification based on GINI index"
+      - name: poverty_intensity
+        description: "Classification based on poverty gap"
+      - name: employment_status
+        description: "Classification based on unemployment rate"
+
+  - name: dim_sovereign_development_wellbeing
+    description: "Education and life expectancy data with categorizations"
+    columns:
+      - name: country
+        description: "Country ISO3 code"
+        tests:
+          - not_null
+      - name: year
+        description: "Year of the data"
+        tests:
+          - not_null
+      - name: school_enrollment
+        description: "Secondary school enrollment rate, % gross"
+      - name: life_expectancy
+        description: "Life expectancy at birth in years"
+      - name: education_access_category
+        description: "Classification based on school enrollment rates"
+      - name: life_expectancy_group
+        description: "Classification based on life expectancy"
+
+  # Fact Models
+  - name: fct_regional_emissions_summary
+    description: "Aggregated emissions and economic data by geographic region"
     columns:
       - name: region
-        description: "Geographic region"
+        description: "Geographic region (e.g., Asia, Europe, Africa)"
         tests:
           - not_null
+      - name: year
+        description: "Year of the data"
+        tests:
+          - not_null
+      - name: country_count
+        description: "Number of countries in the region with data"
       - name: total_emissions
-        description: "Sum of total emissions for all countries in the region"
+        description: "Sum of all emissions for the region"
+      - name: co2_emissions
+        description: "Sum of CO2 emissions for the region"
+      - name: ch4_emissions
+        description: "Sum of CH4 emissions for the region"
+      - name: n2o_emissions
+        description: "Sum of N2O emissions for the region"
+      - name: total_population
+        description: "Total population of the region"
+      - name: avg_gdp_per_capita
+        description: "Average GDP per capita across countries in the region"
+      - name: emissions_per_capita
+        description: "Regional emissions divided by regional population"
+      - name: high_income_count
+        description: "Count of high-income countries in the region"
+      - name: upper_middle_income_count
+        description: "Count of upper-middle-income countries in the region"
+      - name: lower_middle_income_count
+        description: "Count of lower-middle-income countries in the region"
+      - name: low_income_count
+        description: "Count of low-income countries in the region"
+
+  # Dashboard/Analytics Models
+  - name: emissions_by_development
+    description: "Analysis of emissions patterns by country income categories"
+    columns:
+      - name: year
+        description: "Year of the data"
+        tests:
+          - not_null
+      - name: income_category
+        description: "World Bank income classification"
+        tests:
+          - not_null
+      - name: country_count
+        description: "Number of countries in this income category"
+      - name: total_emissions
+        description: "Sum of emissions for all countries in the category"
+      - name: co2_emissions
+        description: "Sum of CO2 emissions for the category"
+      - name: ch4_emissions
+        description: "Sum of CH4 emissions for the category"
+      - name: n2o_emissions
+        description: "Sum of N2O emissions for the category"
+      - name: avg_emissions_per_capita
+        description: "Average emissions per person across countries in the category"
+      - name: avg_emissions_per_million_gdp
+        description: "Average emissions per million $ of GDP in the category"
+      - name: total_population
+        description: "Total population in the income category"
+      - name: avg_gdp_per_capita
+        description: "Average GDP per capita in the income category"
+      - name: percentage_of_global_emissions
+        description: "This category's share of global emissions, %"
+      - name: percentage_of_global_population
+        description: "This category's share of global population, %"
+      - name: emissions_to_population_ratio
+        description: "Ratio showing relative contribution to emissions vs population"
+
+  - name: gpd_emissions_correlation
+    description: "Correlation analysis between GDP and emissions with decoupling metrics"
+    columns:
+      - name: country
+        description: "Country ISO3 code"
+        tests:
+          - not_null
+      - name: country_name
+        description: "Country name"
+      - name: year
+        description: "Year of the data"
+        tests:
+          - not_null
+      - name: region
+        description: "Geographic region"
+      - name: sub_region
+        description: "Geographic sub-region"
+      - name: gdp_per_capita
+        description: "GDP per capita in current US$"
+      - name: population
+        description: "Total population"
+      - name: total_gdp
+        description: "Total GDP (GDP per capita * population)"
+      - name: calculated_total_emissions
+        description: "Total greenhouse gas emissions"
+      - name: emissions_per_capita
+        description: "Emissions per person"
+      - name: emissions_per_million_gdp
+        description: "Emissions per million $ of GDP"
+      - name: avg_regional_gdp_per_capita
+        description: "Average GDP per capita across the region"
+      - name: avg_regional_emissions_per_capita
+        description: "Average emissions per capita across the region"
+      - name: avg_regional_carbon_intensity
+        description: "Average carbon intensity across the region"
+      - name: gdp_vs_regional_avg_pct
+        description: "% above/below regional GDP average"
+      - name: emissions_vs_regional_avg_pct
+        description: "% above/below regional emissions average"
+      - name: gdp_growth_pct
+        description: "Year-over-year GDP growth percentage"
+      - name: emissions_growth_pct
+        description: "Year-over-year emissions growth percentage"
+      - name: gdp_growth_5yr_pct
+        description: "5-year GDP growth percentage"
+      - name: emissions_growth_5yr_pct
+        description: "5-year emissions growth percentage"
+      - name: decoupling_status
+        description: "Classification of relationship between emissions and economic growth"
+      - name: decoupling_status_5yr
+        description: "5-year classification of economic-emissions relationship"
+
+  - name: netherlands_emissions
+    description: "Country-specific detailed analysis for the Netherlands"
+    columns:
+      - name: year
+        description: "Year of the data"
+        tests:
+          - not_null
+      - name: population
+        description: "Total population"
+      - name: gdp_per_capita
+        description: "GDP per capita in current US$"
+      - name: gini_index
+        description: "GINI index measuring income inequality"
+      - name: life_expectancy
+        description: "Life expectancy at birth in years"
+      - name: school_enrollment
+        description: "Secondary school enrollment rate, % gross"
+      - name: calculated_total_emissions
+        description: "Total greenhouse gas emissions"
+      - name: co2_emissions
+        description: "CO2 emissions in metric tons"
+      - name: ch4_emissions
+        description: "CH4 emissions in metric tons"
+      - name: n2o_emissions
+        description: "N2O emissions in metric tons"
+      - name: emissions_per_capita
+        description: "Emissions per person"
+      - name: emissions_per_million_gdp
+        description: "Emissions per million $ of GDP"
+      - name: co2_percentage
+        description: "CO2 as percentage of total emissions"
+      - name: ch4_percentage
+        description: "CH4 as percentage of total emissions"
+      - name: n2o_percentage
+        description: "N2O as percentage of total emissions"
+      - name: yoy_emissions_change_pct
+        description: "Year-over-year emissions change percentage"
+      - name: yoy_population_change_pct
+        description: "Year-over-year population change percentage"
+      - name: yoy_gdp_per_capita_change_pct
+        description: "Year-over-year GDP per capita change percentage"
+      - name: economic_emissions_relationship
+        description: "Classification of economic-emissions relationship"
+      - name: ghg_composition
+        description: "Classification based on dominant greenhouse gas"
+      - name: emission_intensity_category
+        description: "Classification as low, medium, or high emitter"
+      - name: climate_impact_category
+        description: "Classification of short vs long-term climate impact"
+
+  - name: emissions_time_series
+    description: "Time-series analysis of emissions trends with year-over-year comparisons"
+    columns:
+      - name: country
+        description: "Country ISO3 code"
+        tests:
+          - not_null
+      - name: country_name
+        description: "Country name"
+      - name: year
+        description: "Year of the data"
+        tests:
+          - not_null
+      - name: region
+        description: "Geographic region"
+      - name: sub_region
+        description: "Geographic sub-region"
+      - name: calculated_total_emissions
+        description: "Total greenhouse gas emissions"
+      - name: co2_emissions
+        description: "CO2 emissions in metric tons"
+      - name: ch4_emissions
+        description: "CH4 emissions in metric tons"
+      - name: n2o_emissions
+        description: "N2O emissions in metric tons"
+      - name: co2_percentage
+        description: "CO2 as percentage of total emissions"
+      - name: ch4_percentage
+        description: "CH4 as percentage of total emissions"
+      - name: n2o_percentage
+        description: "N2O as percentage of total emissions"
+      - name: ghg_composition
+        description: "Classification based on dominant greenhouse gas"
+      - name: population
+        description: "Total population"
+      - name: gdp_per_capita
+        description: "GDP per capita in current US$"
+      - name: income_category
+        description: "World Bank income classification"
+      - name: emissions_per_capita
+        description: "Emissions per person"
+      - name: absolute_emissions_change
+        description: "Absolute change in emissions from previous year"
+      - name: yoy_emissions_change_pct
+        description: "Year-over-year emissions change percentage"
+      - name: co2_percentage_point_change
+        description: "Change in CO2 percentage points from previous year"
+      - name: baseline_year
+        description: "Reference year for long-term comparisons"
+      - name: baseline_emissions
+        description: "Emissions in the baseline year"
+      - name: baseline_emissions_per_capita
+        description: "Emissions per capita in the baseline year"
+      - name: pct_change_from_baseline
+        description: "Percentage change from baseline year"
+      - name: emissions_cagr
+        description: "Compound annual growth rate for emissions"
+      - name: long_term_trend
+        description: "Classification of emissions trend over time"
+
+  # Debug/QA Models
+  - name: source_data_check
+    description: "Utility model to verify raw data availability and completeness"
+    columns:
+      - name: total_rows
+        description: "Total count of rows in the source data"
+      - name: distinct_countries
+        description: "Count of distinct countries in the source data"
+
+  - name: country_join_check
+    description: "Diagnostic model to validate country code joins"
+    columns:
+      - name: match_status
+        description: "Whether country codes matched with sovereign country list"
+      - name: country_count
+        description: "Count of countries in each match status"
+      - name: sample_countries
+        description: "Sample of countries in each match status category"
