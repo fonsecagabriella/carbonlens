@@ -233,34 +233,34 @@ We create enough models to answer the project key questions:
 
     Used the `emissions_by_development` model to create:
 
-    ✅ Bar chart showing total emissions by income category
-    ✅ Line chart tracking emissions per capita across development levels
-    ✅ Comparison of emissions share vs. population share by income group
+    - ✅ Bar chart showing total emissions by income category
+    - ✅ Line chart tracking emissions per capita across development levels
+    - ✅ Comparison of emissions share vs. population share by income group
 
 - ***Which countries have the highest emissions?***
 
     Used the `top_emitting_countries` model to create:
 
-    ✅ Top 10 emitters by total emissions (bar chart)
-    ✅ Top 10 emitters by per capita emissions (bar chart)
-    ✅ Map visualization of emissions intensity by country
+    - ✅ Top 10 emitters by total emissions (bar chart)
+    - ✅ Top 10 emitters by per capita emissions (bar chart)
+    - ✅ Map visualization of emissions intensity by country
 
 - ***Is there a correlation between GDP and emissions?***
 
     Used the `gdp_emissions_correlation` model to create:
 
-    ✅ Scatter plot of GDP per capita vs. emissions per capita
-    ✅ Comparison of carbon intensity by region
-    ☑️ (to do) Timeline showing countries achieving decoupling
+    - ✅ Scatter plot of GDP per capita vs. emissions per capita
+    - ✅ Comparison of carbon intensity by region
+    - ☑️ (to do) Timeline showing countries achieving decoupling
 
 
 - ***How has the emissions profile changed over time?***
 
     Used the `emissions_time_series` model to create:
 
-    ✅ Line chart showing global emissions trends
-    ✅Comparative timeline of emissions by region
-    ☑️ (to do) Stacked area chart of emissions by gas type over time
+    - ✅ Line chart showing global emissions trends
+    - ✅Comparative timeline of emissions by region
+    - ☑️ (to do) Stacked area chart of emissions by gas type over time
 
 
 ----
