@@ -1,4 +1,11 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    partition_by={
+        "field": "year",
+        "data_type": "date"
+    }
+) }}
+
 
 WITH netherlands_data AS (
     SELECT

@@ -1,4 +1,12 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    partition_by={
+        "field": "year",
+        "data_type": "date"
+    },
+    cluster_by=["country"]
+) }}
+
 
 WITH gdp_emissions_data AS (
     SELECT

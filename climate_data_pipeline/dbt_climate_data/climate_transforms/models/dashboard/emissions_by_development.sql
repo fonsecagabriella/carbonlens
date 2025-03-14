@@ -1,4 +1,11 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    partition_by={
+        "field": "year",
+        "data_type": "date"
+    },
+    cluster_by=["income_category"]
+) }}
 
 WITH economic_emissions AS (
     SELECT

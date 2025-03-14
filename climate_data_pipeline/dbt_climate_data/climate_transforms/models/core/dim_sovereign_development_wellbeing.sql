@@ -1,4 +1,11 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    partition_by={
+        "field": "year",
+        "data_type": "date"
+    },
+    cluster_by=["country"]
+) }}
 
 WITH filtered_data AS (
     SELECT * FROM {{ ref('stg_sovereign_climate_economic') }}
@@ -6,7 +13,7 @@ WITH filtered_data AS (
 
 SELECT
     country,
-    year,
+    DATE(CAST(year AS INT64), 1, 1) AS year,
     school_enrollment,
     life_expectancy,
 

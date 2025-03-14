@@ -1,4 +1,11 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table',
+    partition_by={
+        "field": "year",
+        "data_type": "date"
+    },
+    cluster_by=["country"]
+) }}
 
 WITH sovereign_countries AS (
     SELECT * FROM {{ ref('stg_sovereign_countries') }}
