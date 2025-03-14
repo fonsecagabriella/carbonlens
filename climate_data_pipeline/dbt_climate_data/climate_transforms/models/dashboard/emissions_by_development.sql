@@ -65,4 +65,3 @@ SELECT
     ) AS emissions_to_population_ratio
 FROM economic_emissions
 GROUP BY year, income_category
-ORDER BY year DESC, total_emissions DESC

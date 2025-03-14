@@ -136,4 +136,3 @@ LEFT JOIN averages avg
     ON ged.year = avg.year AND ged.region = avg.region
 LEFT JOIN decoupling d
     ON ged.country = d.country AND ged.year = d.year
-ORDER BY ged.year DESC, ged.gdp_per_capita DESC

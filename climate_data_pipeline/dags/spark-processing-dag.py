@@ -91,6 +91,7 @@ combine_data = PythonOperator(
 )
 
 # Create external tables in BigQuery pointing to the processed Parquet files
+'''before partioning backup
 create_wb_bq_table = BigQueryCreateExternalTableOperator(
     task_id='create_wb_bq_table',
     table_resource={
@@ -104,6 +105,32 @@ create_wb_bq_table = BigQueryCreateExternalTableOperator(
             'sourceUris': [f"{WORLD_BANK_PROCESSED}/*.parquet"],
             'autodetect': True
         },
+    },
+    dag=dag,
+)
+'''
+
+create_combined_bq_table = BigQueryCreateExternalTableOperator(
+    task_id='create_combined_bq_table',
+    table_resource={
+        'tableReference': {
+            'projectId': '{{ var.value.gcp_project }}',
+            'datasetId': BQ_DATASET,
+            'tableId': f'combined_climate_economic_{EXTRACTION_YEAR}',
+        },
+        'externalDataConfiguration': {
+            'sourceFormat': 'PARQUET',
+            'sourceUris': [f"{COMBINED_DATA_PATH}/*.parquet"],
+            'autodetect': True,
+            'hivePartitioningOptions': {
+                'mode': 'CUSTOM',
+                'sourceUriPrefix': f"{COMBINED_DATA_PATH}/",
+                'fields': ['year']
+            }
+        },
+        'clustering': {
+            'fields': ['country', 'region']
+        }
     },
     dag=dag,
 )

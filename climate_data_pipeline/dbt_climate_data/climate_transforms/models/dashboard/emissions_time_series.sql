@@ -32,7 +32,7 @@ emissions_data AS (
     LEFT JOIN {{ ref('dim_sovereign_socioeconomic') }} se
         ON ce.country = se.country AND ce.year = se.year
     LEFT JOIN sovereign_countries sc
-        ON ce.country = sc.alpha_3  -- Changed from sc.country_code to match your other models
+        ON ce.country = sc.alpha_3
     WHERE ce.calculated_total_emissions > 0
 ),
 
@@ -58,7 +58,7 @@ yoy_changes AS (
 baseline AS (
     SELECT
         country,
-        MIN(year) AS baseline_year
+        MIN(EXTRACT(YEAR FROM year)) AS baseline_year_num
     FROM emissions_data
     GROUP BY country
 ),
@@ -67,7 +67,7 @@ baseline AS (
 baseline_comparison AS (
     SELECT
         yc.*,
-        b.baseline_year,
+        b.baseline_year_num,
         baseline_data.calculated_total_emissions AS baseline_emissions,
         baseline_data.emissions_per_capita AS baseline_emissions_per_capita,
         -- Calculate change from baseline
@@ -75,16 +75,17 @@ baseline_comparison AS (
               NULLIF(baseline_data.calculated_total_emissions, 0) * 100, 2) AS pct_change_from_baseline,
         -- Calculate compound annual growth rate (CAGR)
         CASE 
-            WHEN yc.year > b.baseline_year THEN
+            WHEN EXTRACT(YEAR FROM yc.year) > b.baseline_year_num THEN
                 ROUND((POWER((yc.calculated_total_emissions / NULLIF(baseline_data.calculated_total_emissions, 0)), 
-                             1.0 / NULLIF((yc.year - b.baseline_year), 0)) - 1) * 100, 2)
+                         1.0 / NULLIF(EXTRACT(YEAR FROM yc.year) - b.baseline_year_num, 0)) - 1) * 100, 2)
             ELSE NULL
         END AS emissions_cagr
     FROM yoy_changes yc
     INNER JOIN baseline b
         ON yc.country = b.country
     LEFT JOIN emissions_data baseline_data
-        ON b.country = baseline_data.country AND CAST(b.baseline_year AS STRING) = CAST(baseline_data.year AS STRING)  -- Convert both to same type
+        ON b.country = baseline_data.country 
+        AND b.baseline_year_num = EXTRACT(YEAR FROM baseline_data.year)
 )
 
 SELECT
@@ -110,7 +111,7 @@ SELECT
     yoy_emissions_change_pct,
     co2_percentage_point_change,
     -- Long-term comparisons
-    baseline_year,
+    baseline_year_num AS baseline_year,
     baseline_emissions,
     baseline_emissions_per_capita,
     pct_change_from_baseline,
@@ -125,4 +126,3 @@ SELECT
         ELSE 'Insufficient data'
     END AS long_term_trend
 FROM baseline_comparison
-ORDER BY year DESC, calculated_total_emissions DESC

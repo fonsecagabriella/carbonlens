@@ -69,4 +69,3 @@ SELECT
     COUNT(CASE WHEN income_category = 'Low income' THEN 1 END) AS low_income_count
 FROM joined_data
 GROUP BY region, year
-ORDER BY year DESC, total_emissions DESC

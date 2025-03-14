@@ -99,4 +99,3 @@ SELECT
 FROM netherlands_data nd
 LEFT JOIN yoy_changes yc
     ON nd.year = yc.year
-ORDER BY nd.year DESC
