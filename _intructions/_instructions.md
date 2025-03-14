@@ -312,3 +312,4 @@ dbt docs serve
 ### Step 08: Create views for dashboard
 The views created for the dashboard can be found [here](../climate_data_pipeline/dbt_climate_data/climate_transforms/models/dashboard/)
 
+**NOTE:** An in-depth explanation of the transformations performed in dbt, as well as decision for clustering and partioning, can be found [on this document](./dbt_explanation.md).
