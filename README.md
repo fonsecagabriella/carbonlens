@@ -12,6 +12,29 @@ This project implements an end-to-end data pipeline that:
 
 <img src="./_intructions/images/carbonLens-data-pipeline.png" width="80%">
 
+➡️ **[Evalulation criteria](#eval-zoomcamp) for Zoomcamp classmates**
+
+
+**INDEX**
+
+1. **[Project background](#-project-background)**
+    [The problem](#️-the-problem)
+    [The goal](#-the-goal)
+    [The dashboard](#-the-dashboard)
+2. **[Pipeline flow structure](#pipeline-flow-structure)**
+    [Technologies applied](#technologies-applied)
+    [Flow diagram](#flow-diagram)
+    [Flow explanation](#flow-explanation)
+    [Project components](#project-components)
+3. **[How to replicate this project](#how-to-replicate-this-project)**
+4. **[Project Limitations and Future Improvements](#project-limitations-and-future-improvements)**
+5. **[Evaluation criteria - Zoomcamp](#evaluation-criteria-for-zoomcamp-classmates)**
+
+
+----
+
+<div id="project-backgroud"></div>
+
 ## 🌎 Project Background
 This data engineering project leverages two key global datasets: [Climate Trace emissions](https://climatetrace.org/) data and [World Bank socioeconomic indicators](https://data.worldbank.org/indicator/). By combining these complementary datasets, we can explore relationships between countries' carbon footprints and their social/economic development metrics.
 
@@ -46,6 +69,8 @@ If at the time of reading this the board is not longer available (GCS is not che
 
 
 -------
+
+<div id="pipeline-flow"></div>
 
 ##  Pipeline Flow Structure
 
@@ -214,30 +239,93 @@ The lineage graph shows the relationships between these models:
   - Time series analysis of emissions trends
   - (TO DO NEXT) Netherlands-specific emissions profile
 
-### How to replicate this project
+---
+
+## How to replicate this project
 If you'd like to replicate this project, you can find [all the instructions here](./_intructions/_instructions.md).
 
-### Evaluation criteria (for Zoomcamp classmates)
+---
+
+## Project Limitations and Future Improvements
+
+This project was completed within a timeframe of approximately 40 hours.
+While this allowed for the development of a functional data pipeline, it limited the depth and refinement possible in the final implementation.
+**The primary focus was on exploration and delivery of core functionality.**
+
+For a production-grade implementation, the following enhancements would be recommended:
+
+
+- **Domain Knowledge Refinement**
+
+    - Deepen climate science expertise to better interpret greenhouse gas impacts
+    - Improve analysis methodology for comparing 20-year vs 100-year global warming potentials
+    - Incorporate industry-specific emissions benchmarks and targets
+
+- **Performance Optimization**
+
+    - Implement incremental materialization in dbt models to reduce processing time and costs
+    - Add parameterization for test/development runs to limit data processing
+    - Optimize query performance through proper partitioning and clustering (already applied in this version, but it can be improved)
+    - Benchmark and tune resource allocation across the pipeline
+
+- **Infrastructure Improvements**
+
+    - Complete cloud deployment with Infrastructure as Code (IaC)
+    - Establish development, testing, and production environments
+    - Implement comprehensive monitoring and alerting
+    - Create local development setup that mirrors cloud configuration
+
+- **Pipeline Orchestration**
+
+    - Enhance DAG dependencies and error handling
+    - Implement proper retry mechanisms
+    - Add data quality validation between pipeline steps
+    - Create maintenance windows and backfill procedures
+
+- **Documentation and Governance**
+
+    - Develop comprehensive data dictionary
+    - Create lineage documentation
+    - Implement data quality SLAs
+    - Establish clear ownership and stewardship for datasets
+
+These improvements would transform this exploratory project into a robust, production-ready data platform suitable for ongoing climate data analysis and reporting.
+
+---
+
+<div id="eval-zoomcamp"></div>
+
+## Evaluation criteria (for Zoomcamp classmates)
 - Problem description
     4 points: Problem is well described and it's clear what the problem the project solves
+    *➡️ You can check:* [Project background](#project-backgroud)
 
 - Cloud
     2 points: The project is developed in the cloud
     4 points: The project is developed in the cloud and IaC tools are used
+    *➡️ You can check:*
 
 - Data ingestion (choose either batch or stream)
     **Batch / Workflow orchestration**
     4 points: End-to-end pipeline: multiple steps in the DAG, uploading data to data lake
+    *➡️ You can check:* [Pipeline flow structure](#pipeline-flow)
 
 - Data warehouse
-    2 points: Tables are created in DWH, but not optimized
-    4 points: Tables are partitioned and clustered in a way that makes sense for the upstream queries (with explanation)  -working on it
+    4 points: Tables are partitioned and clustered in a way that makes sense for the upstream queries (with explanation)
+    *➡️ You can check:* [dbt explanation](./_intructions/dbt_explanation#clustering--partitioning.md)
 
 - Transformations (dbt, spark, etc)
     4 points: Tranformations are defined with dbt, Spark or similar technologies
+    *➡️ You can check:* [dbt explanation](./_intructions/dbt_explanation)
 
 - Dashboard
     4 points: A dashboard with 2 tiles
+    *➡️ You can check:* [dashboard](./dashboard/)
 
 - Reproducibility
     4 points: Instructions are clear, it's easy to run the code, and the code works
+     *➡️ You can check:* [instructions](./_intructions/_instructions.md)
+
+- Going the extra mile (Optional)
+    - Add tests
+    *➡️ You can check:* [tests](./_intructions/tests.md)
