@@ -1,0 +1,14 @@
+project_id = "your-project-id"  # Replace with your actual GCP project ID
+region = "us-central1"
+zone = "us-central1-a"
+storage_class = "STANDARD"
+data_lake_bucket = "climate-data-lake"
+raw_data_bucket = "climate-raw-data"
+processed_data_bucket = "climate-processed-data"
+raw_dataset = "climate_raw"
+warehouse_dataset = "climate_warehouse"
+composer_environment_name = "climate-data-composer"
+composer_node_count = 3
+composer_machine_type = "n1-standard-1"
+composer_disk_size_gb = 20
+extraction_years = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
