@@ -231,7 +231,7 @@ If you'd like to replicate this project, you can find [all the instructions here
 
 - Data warehouse
     2 points: Tables are created in DWH, but not optimized
-    4 points: Tables are partitioned and clustered in a way that makes sense for the upstream queries (with explanation)
+    4 points: Tables are partitioned and clustered in a way that makes sense for the upstream queries (with explanation)  -working on it
 
 - Transformations (dbt, spark, etc)
     4 points: Tranformations are defined with dbt, Spark or similar technologies
