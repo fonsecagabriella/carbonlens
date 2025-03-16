@@ -29,21 +29,26 @@ output "warehouse_bigquery_dataset" {
 }
 
 output "composer_environment_name" {
-  value       = google_composer_environment.climate_composer.name
+  value       = module.composer.composer_environment_name
   description = "The Cloud Composer environment name"
 }
 
 output "composer_gcs_bucket" {
-  value       = google_composer_environment.climate_composer.config.0.dag_gcs_prefix
+  value       = module.composer.composer_gcs_bucket
   description = "The Cloud Composer GCS bucket for DAGs and other resources"
 }
 
 output "composer_airflow_uri" {
-  value       = google_composer_environment.climate_composer.config.0.airflow_uri
+  value       = module.composer.composer_airflow_uri
   description = "The URI of the Apache Airflow Web UI hosted within the Cloud Composer environment"
 }
 
 output "dataproc_cluster_name" {
-  value       = google_dataproc_cluster.spark_cluster.name
+  value       = module.dataproc.dataproc_cluster_name
   description = "The Dataproc cluster name"
+}
+
+output "dbt_bucket_name" {
+  value       = module.dbt_setup.dbt_bucket_name
+  description = "The GCS bucket for dbt"
 }
