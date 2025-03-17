@@ -10,9 +10,9 @@ This project implements an end-to-end data pipeline that:
 - Transforms the data to be fed to a dashboard
 - Visualizes the data in an interactive dashboard
 
-<img src="./_intructions/images/carbonLens-data-pipeline.png" width="80%">
-
 ➡️ **[Evalulation criteria](#eval-zoomcamp) for Zoomcamp classmates**
+
+<img src="./_intructions/images/carbonLens-data-pipeline.png" width="80%">
 
 
 **INDEX**
@@ -296,36 +296,42 @@ These improvements would transform this exploratory project into a robust, produ
 <div id="eval-zoomcamp"></div>
 
 ## Evaluation criteria (for Zoomcamp classmates)
-- Problem description
-    4 points: Problem is well described and it's clear what the problem the project solves
-    *➡️ You can check:* [Project background](#project-backgroud)
+- **Problem description**
+    - **4 points:** Problem is well described and it's clear what the problem the project solves
+    - ➡️ *You can check:* [Project background](#project-backgroud)
 
-- Cloud
-    2 points: The project is developed in the cloud
-    4 points: The project is developed in the cloud and IaC tools are used
-    *➡️ You can check:*
 
-- Data ingestion (choose either batch or stream)
-    **Batch / Workflow orchestration**
-    4 points: End-to-end pipeline: multiple steps in the DAG, uploading data to data lake
-    *➡️ You can check:* [Pipeline flow structure](#pipeline-flow)
+- **Cloud**
+  - **2 points: The project is developed in the cloud**
+  - 4 points: The project is developed in the cloud and IaC tools are used
+  - ➡️ *You can check:*
 
-- Data warehouse
-    4 points: Tables are partitioned and clustered in a way that makes sense for the upstream queries (with explanation)
-    *➡️ You can check:* [dbt explanation](./_intructions/dbt_explanation#clustering--partitioning.md)
 
-- Transformations (dbt, spark, etc)
-    4 points: Tranformations are defined with dbt, Spark or similar technologies
-    *➡️ You can check:* [dbt explanation](./_intructions/dbt_explanation)
+- Data ingestion (**Batch / Workflow orchestration**)
+  - **4 points:** End-to-end pipeline: multiple steps in the DAG, uploading data to data lake
+  - ➡️ *You can check:* [Pipeline flow structure](#pipeline-flow)
 
-- Dashboard
-    4 points: A dashboard with 2 tiles
-    *➡️ You can check:* [dashboard](./dashboard/)
 
-- Reproducibility
-    4 points: Instructions are clear, it's easy to run the code, and the code works
-     *➡️ You can check:* [instructions](./_intructions/_instructions.md)
+- **Data warehouse**
+  - **4 points:** Tables are partitioned and clustered in a way that makes sense for the upstream queries (with explanation)
+  - ➡️*You can check:* [dbt explanation](./_intructions/dbt_explanation#clustering--partitioning.md)
+
+
+- **Transformations (dbt, spark, etc)**
+  - **4 points:** Tranformations are defined with dbt, Spark or similar technologies
+  - ➡️ *You can check:* [dbt explanation](./_intructions/dbt_explanation)
+
+
+- **Dashboard**
+  - **4 points**: A dashboard with 2 tiles
+  - ➡️ *You can check:* [dashboard](./dashboard/)
+
+
+- **Reproducibility**
+  - **4 points**: Instructions are clear, it's easy to run the code, and the code works
+  - ➡️  *You can check:* [instructions](./_intructions/_instructions.md)
+
 
 - Going the extra mile (Optional)
-    - Add tests
-    *➡️ You can check:* [tests](./_intructions/tests.md)
+  - Add tests
+   ➡️ *You can check:* [a few tests on dbt](./_intructions/tests.md)
