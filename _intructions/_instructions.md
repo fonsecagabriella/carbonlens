@@ -4,7 +4,7 @@ To replicate this project, make sure you have the following:
 
 - A Google Cloud account with: a bucket, a service account (BigQuery and Storage Admin permissions), and two databases (one for datawarehouse, and another which will serve the dbt transformations to the dashboard).
 
-<img src="./images/climate_data_pipeline.png" alt="Climate data pipeline overview" width="80%">
+<img src="./_intructions/images/carbonLens-data-pipeline.png" width="80%">
 
 You can replicate the project by following the instructions below.
 

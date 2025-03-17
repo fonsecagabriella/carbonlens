@@ -10,7 +10,7 @@ This project implements an end-to-end data pipeline that:
 - Transforms the data to be fed to a dashboard
 - Visualizes the data in an interactive dashboard
 
-➡️ **[Evalulation criteria](#eval-zoomcamp) for Zoomcamp classmates**
+➡️ **[Evaluation criteria](#eval-zoomcamp) for Zoomcamp classmates**
 
 <img src="./_intructions/images/carbonLens-data-pipeline.png" width="80%">
 
