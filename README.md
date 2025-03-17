@@ -303,8 +303,7 @@ These improvements would transform this exploratory project into a robust, produ
 
 - **Cloud**
   - **2 points: The project is developed in the cloud**
-  - 4 points: The project is developed in the cloud and IaC tools are used
-  - ➡️ *You can check:*
+  - ➡️  *You can check:* [instructions](./_intructions/_instructions.md)
 
 
 - Data ingestion (**Batch / Workflow orchestration**)
