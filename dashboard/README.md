@@ -12,6 +12,8 @@ The dashboard presents insights from our data pipeline that processes, transform
 
 <video src="https://www.youtube.com/watch?v=zJefmcQqPd8" width="320" height="240" controls></video>
 
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=zJefmcQqPd8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 
 ## Data Pipeline Architecture
 
@@ -56,6 +58,8 @@ This visualization shows how greenhouse gas emissions correlate with economic de
 ### Emissions Time Series Analysis
 
 <img src="./imgs/carbonlens_timeseries.png" width="80%">
+<img src="./imgs/carbonlens_country.png" width="80%">
+<img src="./imgs/carbonlens_country2.png" width="80%">
 
 This visualization tracks emissions trends over time, showing how countries and regions are progressing toward decoupling economic growth from emissions growth.
 
@@ -70,7 +74,7 @@ This visualization tracks emissions trends over time, showing how countries and 
   - Moderate increase
   - Rapid increase
 - **Baseline Comparison** - Shows current emissions levels compared to a baseline year
-- **Emissions Composition** - Breaks down emissions by gas type (CO2, CH4, N2O)
+
 
 #### Notable Insights:
 
