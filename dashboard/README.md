@@ -11,6 +11,9 @@ This dashboard visualizes global greenhouse gas emissions data in relation to ec
 The dashboard presents insights from our data pipeline that processes, transforms, and analyzes the relationship between climate emissions and socioeconomic factors globally.
 
 📺 [Short video demonstration](https://www.youtube.com/watch?v=zJefmcQqPd8)
+📊 [Looker dashboard](https://lookerstudio.google.com/u/0/reporting/e02b247a-e5d1-47d0-a8c3-8b1a254029a2/page/BGa9E)
+
+*This documentation serves as a reference for understanding the climate data dashboard in case the live version becomes unavailable. Last updated: March 2025.*
 
 
 ## Data Pipeline Architecture
