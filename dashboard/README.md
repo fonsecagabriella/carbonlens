@@ -10,7 +10,7 @@ This dashboard visualizes global greenhouse gas emissions data in relation to ec
 
 The dashboard presents insights from our data pipeline that processes, transforms, and analyzes the relationship between climate emissions and socioeconomic factors globally.
 
-📺[Short video demonstration](https://www.youtube.com/watch?v=zJefmcQqPd8)
+📺 [Short video demonstration](https://www.youtube.com/watch?v=zJefmcQqPd8)
 
 
 ## Data Pipeline Architecture
